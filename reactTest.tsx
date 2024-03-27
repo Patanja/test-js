@@ -24,6 +24,14 @@ interface ITest1ComponentProps {
 
 export const Test1Component = (props: ITest1ComponentProps) => {
 
+    const { name, age } = props;
+    const color = age >= 18 ? 'blue' : 'red';
+
+    return (
+        <div style={{ color: color }}>
+            {name}
+        </div>
+    );
 }
 
 
@@ -41,6 +49,11 @@ export const Test1Component = (props: ITest1ComponentProps) => {
  * Getting data from an API (we simulate it with a timeout) is async, please be sure the code updates when we get the response back from the API
  */
 
+import React, { useEffect, useState } from 'react';
+
+interface ITest2ComponentProps {
+    name: string;
+}
 
 /**
  * This function accepts a name and simulates and API call to get the age of the person
@@ -57,16 +70,29 @@ const getAge = async (name: string): Promise<number>  => {
     })
 }
 
-interface ITest2ComponentProps {
-    name: string;
-}
-
 export const Test2Component = (props: ITest2ComponentProps) => {
+    const [age, setAge] = useState<number | null>(null);
 
     useEffect(() => {
-    }, []);
-    
-}
+        const fetchAge = async () => {
+            const age = await getAge(props.name);
+            setAge(age);
+        };
 
+        fetchAge();
+    }, [props.name]);
+
+    if (age === null) {
+        return null; // or a loading spinner, etc.
+    }
+
+    const color = age >= 18 ? 'blue' : 'red';
+
+    return (
+        <div style={{ color: color }}>
+            {props.name}
+        </div>
+    );
+}
 
 
